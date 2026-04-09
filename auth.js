@@ -11,35 +11,16 @@ router.get('/google',
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    // Successful authentication, serve a page that will check auth and redirect
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Redirigiendo...</title>
-        <script>
-          // Check authentication and redirect
-          fetch('/auth/me')
-            .then(response => response.json())
-            .then(user => {
-              if (user.error) {
-                window.location.href = '/';
-              } else {
-                window.location.href = '/dashboard';
-              }
-            })
-            .catch(() => {
-              window.location.href = '/';
-            });
-        </script>
-      </head>
-      <body>
-        <p>Autenticando...</p>
-      </body>
-      </html>
-    `);
+    // Successful authentication, redirect directly to dashboard
+    req.session.save(err => {
+      if (err) {
+        return res.redirect('/');
+      }
+      res.redirect('/dashboard');
+    });
   }
 );
+
 
 // Logout
 router.get('/logout', (req, res) => {
