@@ -76,10 +76,13 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Middleware to check authentication for API routes
+// Middleware to check authentication for API routes and browser pages
 const requireAuth = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
+  }
+  if (req.accepts('html')) {
+    return res.redirect('/');
   }
   res.status(401).json({ error: 'Authentication required' });
 };
